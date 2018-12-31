@@ -5,8 +5,6 @@ var config = require('../data/config');
 var serviceUrlConfig  = require("../data/serviceURL's");
 var request = require('request');
 
-/* Pooling Funds */
-
 router.post('/mergeFunds', function(req, res, next) {
   var token = req.headers['x-access-token'];
   var postData = req.body;
@@ -27,8 +25,8 @@ router.post('/mergeFunds', function(req, res, next) {
         var restBankDetails = data.banks.filter((bank)=>{
           return bank.bankName != postData.receiver.receiverBank && bank.bankName != obj.senderBank;
         });
-        filteredSenderBank.accounts[0].balance = parseInt(filteredSenderBank.accounts[0].balance) - parseInt(filteredSenderBank.accounts[0].minBalance) - parseInt(filteredSenderBank.accounts[0].standingInst) ;
-        filteredReceiverBank.accounts[0].balance = parseInt(filteredReceiverBank.accounts[0].balance) + parseInt(filteredSenderBank.accounts[0].balance) - parseInt(filteredSenderBank.accounts[0].minBalance) - parseInt(filteredSenderBank.accounts[0].standingInst);
+        filteredSenderBank.accounts[0].balance = parseInt(filteredSenderBank.accounts[0].balance) - parseInt(filteredSenderBank.accounts[0].availableBalance);
+        filteredReceiverBank.accounts[0].balance = parseInt(filteredReceiverBank.accounts[0].balance) + parseInt(filteredSenderBank.accounts[0].availableBalance);
         filteredReceiverBank.accounts[0].availableBalance += parseInt(filteredSenderBank.accounts[0].availableBalance);
         filteredSenderBank.accounts[0].availableBalance = 0;
         data.banks = [...restBankDetails, filteredReceiverBank, filteredSenderBank];
